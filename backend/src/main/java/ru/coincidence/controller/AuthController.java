@@ -2,6 +2,7 @@ package ru.coincidence.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class AuthController {
     private final UserRoleRepository userRoleRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
         System.out.println(">>> Received login request: " + request);
         System.out.println(">>> Username: '" + request.username() + "'");
         System.out.println(">>> Password: '" + request.password() + "'");
@@ -65,8 +66,9 @@ public class AuthController {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
             String jwtToken = jwtService.generateToken(userDetails);
+            long expiresIn = jwtService.getExpirationTime();
 
-            return ResponseEntity.ok(new AuthResponse(jwtToken));
+            return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
 
         } catch (BadCredentialsException e) {
             System.out.println(">>> Invalid credentials: " + e.getMessage());
@@ -82,7 +84,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@RequestBody SignUpRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody SignUpRequest request) {
         // 1. Проверяем, существует ли пользователь
         try {
             userDetailsService.loadUserByUsername(request.username());
@@ -125,7 +127,8 @@ public class AuthController {
                 .build();
 
         String token = jwtService.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(token));
+        long expiresIn = jwtService.getExpirationTime();
+        return ResponseEntity.ok(new AuthResponse(token, expiresIn));
     }
 
     @PostMapping("/refresh")
@@ -140,7 +143,8 @@ public class AuthController {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         if (jwtService.isTokenValid(jwt, userDetails)) {
             String newToken = jwtService.generateToken(userDetails);
-            return ResponseEntity.ok(new AuthResponse(newToken));
+            long expiresIn = jwtService.getExpirationTime();
+            return ResponseEntity.ok(new AuthResponse(newToken, expiresIn));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
