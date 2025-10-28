@@ -34,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        System.out.println(">>> ServletPath: " + request.getServletPath());
         String servletPath = request.getServletPath();
+        String method = request.getMethod();
 
-        if (request.getMethod().equals("OPTIONS")) {
+        if (method.equals("OPTIONS")) {
             filterChain.doFilter(request, response);
             return;
         }
