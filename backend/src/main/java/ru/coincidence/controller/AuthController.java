@@ -66,7 +66,7 @@ public class AuthController {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
             String jwtToken = jwtService.generateToken(userDetails);
-            long expiresIn = jwtService.getExpirationTime();
+            long expiresIn = jwtService.getExpirationTimeInSeconds(jwtToken);
 
             return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
 
@@ -126,9 +126,9 @@ public class AuthController {
                 .authorities(user.getAuthorities())
                 .build();
 
-        String token = jwtService.generateToken(userDetails);
-        long expiresIn = jwtService.getExpirationTime();
-        return ResponseEntity.ok(new AuthResponse(token, expiresIn));
+        String jwtToken = jwtService.generateToken(userDetails);
+        long expiresIn = jwtService.getExpirationTimeInSeconds(jwtToken);
+        return ResponseEntity.ok(new AuthResponse(jwtToken, expiresIn));
     }
 
     @PostMapping("/refresh")
@@ -143,7 +143,7 @@ public class AuthController {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         if (jwtService.isTokenValid(jwt, userDetails)) {
             String newToken = jwtService.generateToken(userDetails);
-            long expiresIn = jwtService.getExpirationTime();
+            long expiresIn = jwtService.getExpirationTimeInSeconds(newToken);
             return ResponseEntity.ok(new AuthResponse(newToken, expiresIn));
         }
 
