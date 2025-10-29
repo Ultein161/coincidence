@@ -2,6 +2,19 @@
 
 This is a Russian-language dating application called "СвойЧеловек+" (formerly LoveConnect). The application helps users find compatible matches through a personality-based compatibility test system. Users can browse potential matches in a feed, chat with connections, and manage their profiles. The app features a premium "Prime" subscription tier that unlocks additional features like unlimited swipes and advanced filters.
 
+## Recent Progress (October 2025)
+
+**Backend JWT Authentication - Fully Operational**:
+- ✅ Spring Boot backend running successfully on port 8080
+- ✅ PostgreSQL database connected (Neon integration) with proper JDBC URL formatting
+- ✅ JWT authentication system fully functional (signup, login, token generation)
+- ✅ CORS configured with environment-based allowed origins (Replit domains + localhost)
+- ✅ DTO validation implemented using jakarta.validation annotations
+- ✅ AuthResponse includes `expiresIn` field (86400000ms = 24 hours)
+- ✅ JwtAuthenticationFilter correctly bypasses `/api/auth/**` endpoints for public access
+- ✅ Database seeded with initial authorities (USER, ADMIN roles)
+- ✅ Tested with successful user registration and login, JWT token returned
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

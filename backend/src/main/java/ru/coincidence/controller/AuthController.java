@@ -2,6 +2,7 @@ package ru.coincidence.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class AuthController {
     private final UserRoleRepository userRoleRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
         System.out.println(">>> Received login request: " + request);
         System.out.println(">>> Username: '" + request.username() + "'");
         System.out.println(">>> Password: '" + request.password() + "'");
@@ -83,7 +84,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@RequestBody SignUpRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody SignUpRequest request) {
         // 1. Проверяем, существует ли пользователь
         try {
             userDetailsService.loadUserByUsername(request.username());

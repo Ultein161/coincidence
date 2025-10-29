@@ -92,11 +92,28 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        //configuration.setAllowedOriginPatterns(List.of("http://localhost:3000")); // или "*" для dev
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        
+        // Получаем Replit домен из переменной окружения
+        String replitDomains = System.getenv("REPLIT_DOMAINS");
+        
+        // Разрешённые источники (origins)
+        java.util.List<String> allowedOrigins = new java.util.ArrayList<>();
+        allowedOrigins.add("http://localhost:5173"); // Vite dev server
+        allowedOrigins.add("http://localhost:5000");  // Frontend production
+        
+        // Добавляем Replit домены, если они есть
+        if (replitDomains != null && !replitDomains.isEmpty()) {
+            String[] domains = replitDomains.split(",");
+            for (String domain : domains) {
+                allowedOrigins.add("https://" + domain.trim());
+            }
+        }
+        
+        configuration.setAllowedOriginPatterns(allowedOrigins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // важно для авторизации
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
