@@ -87,15 +87,4 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-    public long getExpirationTimeInSeconds(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        Date expiration = claims.getExpiration();
-        Date now = new Date();
-        return (expiration.getTime() - now.getTime()) / 1000; // в секундах
-    }
 }
